@@ -138,6 +138,9 @@ namespace ImageProcessingActivity
             l.UnlockProcessedImageData(procesed);
         };
 
+        // Sir, this is the method for doing the subtraction
+        // Since this is designed where adding a method here automatically list it as a filter type
+        // This is the only thing needed for the subtraction filter
         public static Action<Layer> Subtract = l =>
         {
             Normal(l);

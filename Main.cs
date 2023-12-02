@@ -690,6 +690,7 @@ namespace ImageProcessingActivity
 
         }
 
+        // Code for changing the subtraction color
         private void btnSubtractColor_Click(object sender, EventArgs e)
         {
             DialogResult result = subtractColorDialog.ShowDialog();
@@ -706,7 +707,7 @@ namespace ImageProcessingActivity
             Util.Control.OnlyAcceptNumbers(e);
         }
 
-
+        // Code fore changing the tolerance value of the subtraction filter
         private void tbTolerance_TextChanged(object sender, EventArgs e)
         {
 

@@ -73,6 +73,7 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.lbLayers = new System.Windows.Forms.ListBox();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.btnAddDynamic = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnArrangeDown = new System.Windows.Forms.Button();
             this.btnArrangeUp = new System.Windows.Forms.Button();
@@ -89,6 +90,7 @@
             this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.cbLayerFilters = new System.Windows.Forms.ToolStripComboBox();
+            this.cbDeviceList = new System.Windows.Forms.ToolStripComboBox();
             this.pnlToolbar = new System.Windows.Forms.Panel();
             this.btnErase = new System.Windows.Forms.Button();
             this.btnBrush = new System.Windows.Forms.Button();
@@ -96,8 +98,6 @@
             this.fileDialog = new System.Windows.Forms.OpenFileDialog();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.subtractColorDialog = new System.Windows.Forms.ColorDialog();
-            this.btnAddDynamic = new System.Windows.Forms.Button();
-            this.cbDeviceList = new System.Windows.Forms.ToolStripComboBox();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.pnlDetails.SuspendLayout();
@@ -604,6 +604,17 @@
             this.panel3.Size = new System.Drawing.Size(392, 26);
             this.panel3.TabIndex = 1;
             // 
+            // btnAddDynamic
+            // 
+            this.btnAddDynamic.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnAddDynamic.Location = new System.Drawing.Point(122, 0);
+            this.btnAddDynamic.Name = "btnAddDynamic";
+            this.btnAddDynamic.Size = new System.Drawing.Size(68, 26);
+            this.btnAddDynamic.TabIndex = 4;
+            this.btnAddDynamic.Text = "+ Camera";
+            this.btnAddDynamic.UseVisualStyleBackColor = true;
+            this.btnAddDynamic.Click += new System.EventHandler(this.btnAddDynamic_Click);
+            // 
             // btnDelete
             // 
             this.btnDelete.Dock = System.Windows.Forms.DockStyle.Left;
@@ -766,6 +777,12 @@
             this.cbLayerFilters.Size = new System.Drawing.Size(121, 30);
             this.cbLayerFilters.SelectedIndexChanged += new System.EventHandler(this.cbLayerFilters_SelectedIndexChanged);
             // 
+            // cbDeviceList
+            // 
+            this.cbDeviceList.Name = "cbDeviceList";
+            this.cbDeviceList.Size = new System.Drawing.Size(121, 30);
+            this.cbDeviceList.Click += new System.EventHandler(this.cbDeviceList_Click);
+            // 
             // pnlToolbar
             // 
             this.pnlToolbar.BackColor = System.Drawing.SystemColors.ControlDarkDark;
@@ -812,23 +829,6 @@
             this.fileDialog.FilterIndex = 2;
             this.fileDialog.RestoreDirectory = true;
             this.fileDialog.Title = "Select an Image";
-            // 
-            // btnAddDynamic
-            // 
-            this.btnAddDynamic.Dock = System.Windows.Forms.DockStyle.Left;
-            this.btnAddDynamic.Location = new System.Drawing.Point(122, 0);
-            this.btnAddDynamic.Name = "btnAddDynamic";
-            this.btnAddDynamic.Size = new System.Drawing.Size(68, 26);
-            this.btnAddDynamic.TabIndex = 4;
-            this.btnAddDynamic.Text = "+ Camera";
-            this.btnAddDynamic.UseVisualStyleBackColor = true;
-            this.btnAddDynamic.Click += new System.EventHandler(this.btnAddDynamic_Click);
-            // 
-            // cbDeviceList
-            // 
-            this.cbDeviceList.Name = "cbDeviceList";
-            this.cbDeviceList.Size = new System.Drawing.Size(121, 30);
-            this.cbDeviceList.Click += new System.EventHandler(this.cbDeviceList_Click);
             // 
             // Main
             // 
