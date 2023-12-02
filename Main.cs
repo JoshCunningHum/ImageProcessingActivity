@@ -66,6 +66,7 @@ namespace ImageProcessingActivity
 
         // Cameruh
         FilterInfoCollection videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+        VideoCaptureDevice videoSource = null;
 
         // Draggin Feature
         public Point PointOrigin = new Point(0, 0);
@@ -573,6 +574,7 @@ namespace ImageProcessingActivity
             {
                 // Set to specific layer
                 if (SelectedLayer >= Layer.layers.Count) return;
+                if (SelectedLayer is DynamicLayer) return;
                 data = Histogram.Grey(Layer.layers[SelectedLayer]?.processed);
             }
 
@@ -757,6 +759,35 @@ namespace ImageProcessingActivity
         private void cbDeviceList_Click(object sender, EventArgs e)
         {
             RefreshDeviceList();
+        }
+
+        private void cbDeviceList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Get the camera layer
+            Console.WriteLine("Attempt to set video source on camera layer");
+            if (!(SelectedLayer is DynamicLayer)) return;
+            if(videoSource != null && videoSource.IsRunning)
+            {
+                Console.WriteLine("Stopping currently running video source");
+                videoSource.SignalToStop();
+                videoSource = null;
+            }
+
+            DynamicLayer layer = (DynamicLayer)SelectedLayer;
+            // Get the current video device
+
+            Console.WriteLine("Attempt to create video source");
+
+            try
+            {
+                videoSource = new VideoCaptureDevice(videoDevices[cbDeviceList.SelectedIndex].MonikerString);
+                Console.WriteLine("Successfully created video source");
+                layer.setDevice(videoSource);   
+            }
+            catch 
+            {
+                // Haha nothing
+            }
         }
     }
 }

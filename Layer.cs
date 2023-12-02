@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ImageProcessingActivity
 {
@@ -24,20 +25,22 @@ namespace ImageProcessingActivity
 
         // Uses Visitor Pattern-Like Structure to apply filters
 
-        public static Action<Layer> Normal = l =>
+        public static Action<Layer>Normal = l =>
         {
             
             // Just copy the image to the processed
             l.processed = new Bitmap(l.image);
         };
 
-        public static Action<Layer> Inverted = l =>
+        public static Action<Layer>Inverted = l =>
         {
             // Do a basic copy first
             Normal(l);
 
+            Bitmap ogimg = new Bitmap(l.image);
+
             BitmapData procesed = l.GetProcessedImageData();
-            BitmapData og = l.GetImageData();
+            BitmapData og = ogimg.LockBits(new Rectangle(0, 0, ogimg.Width, ogimg.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
 
             IntPtr pStart = procesed.Scan0;
             IntPtr oStart = og.Scan0;
@@ -61,17 +64,23 @@ namespace ImageProcessingActivity
                 }
             }
 
-            l.UnlockImageData(og);
+            ogimg.UnlockBits(og);
             l.UnlockProcessedImageData(procesed);
+        };
+
+        public static Action<Layer> CC = l =>
+        {
+            Normal(l);
         };
 
         public static Action<Layer> Greyscale = l =>
         {
             Normal(l);
 
+            Bitmap ogimg = new Bitmap(l.image);
 
             BitmapData procesed = l.GetProcessedImageData();
-            BitmapData og = l.GetImageData();
+            BitmapData og = ogimg.LockBits(new Rectangle(0, 0, ogimg.Width, ogimg.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
 
             IntPtr pStart = procesed.Scan0;
             IntPtr oStart = og.Scan0;
@@ -93,7 +102,7 @@ namespace ImageProcessingActivity
                 }
             }
 
-            l.UnlockImageData(og);
+            ogimg.UnlockBits(og);
             l.UnlockProcessedImageData(procesed);
         };
 
@@ -102,8 +111,10 @@ namespace ImageProcessingActivity
         {
             Normal(l);
 
+            Bitmap ogimg = new Bitmap(l.image);
+
             BitmapData procesed = l.GetProcessedImageData();
-            BitmapData og = l.GetImageData();
+            BitmapData og = ogimg.LockBits(new Rectangle(0, 0, ogimg.Width, ogimg.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
 
             IntPtr pStart = procesed.Scan0;
             IntPtr oStart = og.Scan0;
@@ -134,7 +145,7 @@ namespace ImageProcessingActivity
                 }
             }
 
-            l.UnlockImageData(og);
+            ogimg.UnlockBits(og);
             l.UnlockProcessedImageData(procesed);
         };
 
@@ -145,8 +156,10 @@ namespace ImageProcessingActivity
         {
             Normal(l);
 
+            Bitmap ogimg = new Bitmap(l.image);
+
             BitmapData procesed = l.GetProcessedImageData();
-            BitmapData og = l.GetImageData();
+            BitmapData og = ogimg.LockBits(new Rectangle(0, 0, ogimg.Width, ogimg.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
 
             IntPtr pStart = procesed.Scan0;
             IntPtr oStart = og.Scan0;
@@ -189,7 +202,7 @@ namespace ImageProcessingActivity
                 }
             }
 
-            l.UnlockImageData(og);
+            ogimg.UnlockBits(og);
             l.UnlockProcessedImageData(procesed);
         };
 
@@ -197,6 +210,8 @@ namespace ImageProcessingActivity
 
     public class Layer
     {
+        public static object syncRoot = new object();
+
         public static Pen DebugPen = new Pen(Color.Yellow, 1);
 
         public static Color SelectedBorderColor = Color.Red;
@@ -232,7 +247,10 @@ namespace ImageProcessingActivity
         public Point offset;
 
         public Bitmap processed = null; // will hold the original image, to be processed when changing filters
+
         public Bitmap image = null; // will also hold the size of this whole layer
+
+        public bool isImageUsed = false;
 
         public Action<Layer> Filter = LayerFilter.Normal;
 
@@ -246,7 +264,7 @@ namespace ImageProcessingActivity
             this.m = m;
         }
 
-        public Layer(Image img, Main m)
+        public Layer(System.Drawing.Image img, Main m)
         {
             image = (Bitmap) img;
             init();
@@ -262,8 +280,8 @@ namespace ImageProcessingActivity
             ApplyFilter();
         }
 
-        public void Draw(Graphics g, RectangleF CanvasBounds)
-        {
+         public virtual void Draw(Graphics g, RectangleF CanvasBounds)
+        {   
             PointF Location = m.ImageOffset + Util.Cast.ToSizeF(Util.Scale.PointF(offset, m.ScaleRatio));
             SizeF Size = Util.Scale.SizeF(processed.Size, m.ScaleRatio);
 
@@ -300,12 +318,14 @@ namespace ImageProcessingActivity
 
         public BitmapData GetImageData()
         {
+            isImageUsed = true;
             return image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
         }
         
         public void UnlockImageData(BitmapData data)
         {
             image.UnlockBits(data);
+            isImageUsed = false;
         }
 
         public void InsertRowsAndColumns(int rows, int columns)
@@ -380,10 +400,10 @@ namespace ImageProcessingActivity
             ApplyFilter();
         }
 
-        public void ApplyFilter()
+        public virtual void ApplyFilter(Boolean NoUpdateHistogram = false)
         {
             Filter(this);
-            if(m != null) m.RefreshHistogram();
+            if(m != null && !NoUpdateHistogram) m.RefreshHistogram();
         }
 
         public void SetFilter(Action<Layer> f)

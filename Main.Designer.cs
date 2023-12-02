@@ -781,6 +781,7 @@
             // 
             this.cbDeviceList.Name = "cbDeviceList";
             this.cbDeviceList.Size = new System.Drawing.Size(121, 30);
+            this.cbDeviceList.SelectedIndexChanged += new System.EventHandler(this.cbDeviceList_SelectedIndexChanged);
             this.cbDeviceList.Click += new System.EventHandler(this.cbDeviceList_Click);
             // 
             // pnlToolbar
